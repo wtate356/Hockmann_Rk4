@@ -12,7 +12,7 @@ finalRadius = 7000000       #destination circular orbit radius in m
 initialVelocity = 7730      #initial velocity in m/s
 
 
-def iterative_calculator(ri, vi, mi, a, delta_t):
+def iterative_calculator(ri, vi, mi, a, delta_t):        #The brain, calculates radius change and tells when to turn on or off
     if a < finalRadius and ri < finalRadius:
         delta_v = ve * np.log(mi / (mi - massburn * delta_t))       #if spacecraft is below turns on for time interval, otherwise coasts (below if apogee distance < finalRadius)
         mi = mi - massburn * delta_t            #updates mass
@@ -38,45 +38,19 @@ def iterative_calculator(ri, vi, mi, a, delta_t):
 
     return float(rf), float(vf), float(mi), float(theta), float(a)  #outputs rf, vf, and mi to iterate upon, theta to graph it, a for conditioning
 
-"""
-def exact_calculator(ri, rf, vi, time):        #assumes instantaneous velocity change so just 1 smooth ellipse, calculates location at specified times
-    a = (ri + rf) / 2                   #semi-major axis
-    ecc = 1 - ri / a
-    M = np.sqrt(mu / a**3) * time       #mean anomaly
-
-    #solves for E which is an IVP
-    Ei = M
-    change = 10
-    while abs(change) >= 1e-6:          #finds E (eccentric anomaly)
-        change = (Ei - ecc*np.sin(Ei) - M) / (1 - ecc * np.cos(Ei))
-        Ef = Ei - change
-        Ei = Ef
-    
-    costheta = (np.cos(Ef) - ecc) / (1 - ecc * np.cos(Ef))      #finds cos(theta) where theta = true anomaly
-    theta = np.arccos(costheta) * 180 / np.pi                   #finds angle
-    vp = np.sqrt((mu * 2 * rf) / (ri * (ri + rf)))              #velocity at periapsis
-    va = np.sqrt((mu * 2 * ri) / (rf * (ri + rf)))              #velocity at apoapsis
-
-    r = 4 * mu / ((vp + va)**2 + (vp**2 - va**2) * costheta)    #solves for radius at specified time
-    return float(r), float(theta)
-"""
-
-
 # sets up the while loop to have variables to call
 inTransfer = True
 radius = initialRadius
 velocity  = initialVelocity
 mass = mi
 a = initialRadius
-n = 1
+n = 0
 
 listTime = [0]
 listRadius = [initialRadius]
-listRealRadius = [initialRadius]
 listVelocity = [initialVelocity]
 listMass = [mi]
 listAngles = [0]
-listRealAngles = [0]
 
 
 while inTransfer:
@@ -85,6 +59,7 @@ while inTransfer:
     velocity = x[1]
     mass = x[2]
     a = x[4]
+    n += 1
 
     if np.isnan(radius):    #stops loop if mass all burnt
         inTransfer = False
@@ -96,10 +71,6 @@ while inTransfer:
     listVelocity.append(velocity)
     listMass.append(mass)
     listAngles.append(x[3] + listAngles[-1])
-    
-    n += 1
-    
-
 
 #print(f"Time array: {listTime}")
 #print(f"Radii: {listRadius}")
