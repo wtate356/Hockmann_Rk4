@@ -65,13 +65,15 @@ while inTransfer:
         inTransfer = False
     if abs(radius - finalRadius) < 10 and abs(radius - listRadius[-1]) < 10:    #tolerances
         inTransfer = False
-    
+
+    #updates data lists
     listTime.append(n*delta_t)
     listRadius.append(radius)
     listVelocity.append(velocity)
     listMass.append(mass)
     listAngles.append(x[3] + listAngles[-1])
 
+#writes out data
 #print(f"Time array: {listTime}")
 #print(f"Radii: {listRadius}")
 #print(f"Velocity: {listVelocity}")
