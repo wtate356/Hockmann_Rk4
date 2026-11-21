@@ -63,7 +63,7 @@ while inTransfer:
 
     if np.isnan(radius):    #stops loop if mass all burnt
         inTransfer = False
-    if abs(radius - finalRadius) < 10 and abs(radius - listRadius[-1]) < 10:    #tolerances
+    if abs(radius - finalRadius) < 10 and abs(radius - listRadius[-1]) < 10:    #tolerances, gets within 10 m
         inTransfer = False
 
     #updates data lists
